@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+	<Appenders>
+		<Console name="Console" target="SYSTEM_OUT">
+			<PatternLayout pattern="%d{YYYY-MM-dd HH:mm:ss} [%t] %-5p %c{1}:%L - %msg%n" />
+		</Console>
+ 
+<!--		<RollingFile name="RollingFile" filename="log/DocumentStorageStatusLog.log"-->
+<!--			filepattern="${logPath}/%d{YYYYMMddHHmmss}.log">-->
+<!--			<PatternLayout pattern="%d{YYYY-MM-dd HH:mm:ss} [%t] %-5p %c{1}:%L - %msg%n" />-->
+<!--			<Policies>-->
+<!--				<SizeBasedTriggeringPolicy size="100 MB" />-->
+<!--			</Policies>-->
+<!--			<DefaultRolloverStrategy max="20" />-->
+<!--		</RollingFile>-->
+ 
+	</Appenders>
+	<Loggers>
+		<Root level="debug">
+			<AppenderRef ref="Console" />
+<!--			<AppenderRef ref="RollingFile" />-->
+		</Root>
+<!--		<Logger name="org.hibernate" level="debug">-->
+<!--			<AppenderRef ref="Console" />-->
+<!--		</Logger>-->
+		<Logger name="org.hibernate" level="info" additivity="false">
+			<AppenderRef ref="Console" />
+		</Logger>
+		<Logger name="org.hibernate.SQL" level="debug" additivity="false">
+			<AppenderRef ref="Console" />
+		</Logger>
+		<Logger name="org.hibernate.type.descriptor.sql" level="trace" additivity="false">
+			<AppenderRef ref="Console" />
+		</Logger>
+		<Logger name="org.thymeleaf" level="info" additivity="false">
+			<AppenderRef ref="Console" />
+		</Logger>
+		<Logger name="org.reflections" level="info" additivity="false">
+			<AppenderRef ref="Console" />
+		</Logger>
+		<Logger name="io.swagger" level="info" additivity="false">
+			<AppenderRef ref="Console" />
+		</Logger>
+
+
+		<Logger name="org.apache.pdfbox" level="error" additivity="false">
+			<AppenderRef ref="Console" />
+		</Logger>
+		<Logger name="org.apache.pdfbox.pdmodel.font.PDFont" level="error" additivity="false">
+			<AppenderRef ref="Console" />
+		</Logger>
+		<Logger name="org.apache.pdfbox.pdmodel.PDDocument" level="error" additivity="false">
+			<AppenderRef ref="Console" />
+		</Logger>
+		<Logger name="org.apache.pdfbox.text.PDFTextStripper" level="error" additivity="false">
+			<AppenderRef ref="Console" />
+		</Logger>
+	</Loggers>
+</Configuration>

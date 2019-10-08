@@ -1,0 +1,89 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Done</title>
+</head>
+<body>
+    <th:block th:unless="${entity} == null">
+        <table>
+            <tbody>
+            <tr><td><span th:text="|${entityType} ${action}.|">Action info</span></td></tr>
+            </tbody>
+        </table>
+        <table>
+            <tbody>
+            <tr th:if="${entityType.name()} == 'DOCUMENT'">
+                <td><span th:utext="|Id: ${entity.id} |">Document id</span></td>
+                <td><span th:utext="|, Document Path: ${entity.path} |">Document Path</span></td>
+                <td><a href="content" th:href="@{~/DocumentStorageWithFramework/rest/docs/{name}/content(name=${entity.name})}">Get Content</a></td>
+                <td><a href="download" th:href="@{~/DocumentStorageWithFramework/rest/docs/{name}(name=${entity.name})}">Download</a></td>
+                <th:block th:unless="${entity.documentsPermissions.empty}">
+                    <td><span th:utext="|, Groups: |">Doc's Groups</span></td>
+                    <td><th:block th:each="docPermissions : ${entity.documentsPermissions}"><span th:utext="|[Id: ${docPermissions.group.id}, ${docPermissions.permissions}]  |">Permissions</span></th:block></td>
+                </th:block>
+                <td th:if="${entity.documentsPermissions.empty}"><span th:utext="|, No Document Permissions |"></span></td>
+            </tr>
+            <tr th:if="${entityType.name()} == 'FOLDER'">
+                <td><span th:utext="|Id: ${entity.id} |">Folder id</span></td>
+                <td><span th:utext="|, Folder Path: ${entity.path} |">Folder Path</span></td>
+                <th:block th:unless="${entity.foldersPermissions.empty}">
+                    <td><span th:utext="|, Groups: |">Folder's Groups</span></td>
+                    <td><th:block th:each="folderPermissions : ${entity.foldersPermissions}"><span th:utext="|[Id: ${folderPermissions.group.id}, ${folderPermissions.permissions}]  |">Permissions</span></th:block></td>
+                </th:block>
+                <td th:if="${entity.foldersPermissions.empty}"><span th:utext="|, No Folder Permissions |"></span></td>
+            </tr>
+            <tr th:if="${entityType.name()} == 'USER'">
+                <td><span th:utext="|Id: ${entity.id} |">User id</span></td>
+                <td><span th:utext="|, Name: ${entity.name} |">User name</span></td>
+                <td>
+                    <span th:if="${entity.password} == null" th:utext="|, No Password|">User password</span>
+                    <span th:unless="${entity.password} == null" th:utext="|, Password: ${entity.password}|">User password</span>
+                </td>
+                <th:block th:unless="${entity.groups.empty}">
+                <td><span th:utext="|, Groups: |">Groups</span></td>
+                <td><th:block th:each="group : ${entity.groups}"><span th:utext="|[id: ${group.id}, ${group.name}] |">Group name</span></th:block></td>
+                </th:block>
+                <td th:if="${entity.groups.empty}"><span th:utext="|, No Groups|"></span></td>
+            </tr>
+            <tr th:if="${entityType.name()} == 'GROUP'">
+                <td><span th:utext="|Id: ${entity.id} |">Group id</span></td>
+                <td><span th:utext="|, Name: ${entity.name} |">Group name</span></td>
+                <!--<th:block th:unless="${entity.documentsPermissions.empty}">
+                    <td><span th:utext="|, Docs: |">Group's Docs</span></td>
+                    <td><th:block th:each="docPermissions : ${entity.documentsPermissions}"><span th:utext="|[Id: ${docPermissions.document.id}, ${docPermissions.permissions}]  |">Permissions</span></th:block></td>
+                </th:block>
+                <td th:if="${entity.documentsPermissions.empty}"><span th:utext="|, No Document Permissions |"></span></td>-->
+                <!--<th:block th:unless="${entity.foldersPermissions.empty}">
+                    <td><span th:utext="|, Folders: |">Group's Folders</span></td>
+                    <td><th:block th:each="folderPermissions : ${entity.foldersPermissions}"><span th:utext="|[Id: ${folderPermissions.folder.id}, ${folderPermissions.permissions}]  |">Permissions</span></th:block></td>
+                </th:block>
+                <td th:if="${entity.foldersPermissions.empty}"><span th:utext="|, No Folder Permissions |"></span></td>-->
+                <th:block th:unless="${entity.users.empty}">
+                    <td><span th:utext="|, Users: |">Group's Users</span></td>
+                    <td><th:block th:each="user : ${entity.users}"><span th:utext="|[id: ${user.id}, ${user.name}] |">User</span></th:block></td>
+                </th:block>
+                <td th:if="${entity.users.empty}"><span th:utext="|, No Users|"></span></td>
+            </tr>
+            <tr th:if="${entityType.name()} == 'DOC_GROUP_PERMISSIONS'">
+                <td><span th:utext="|Id: ${entity.id} |">Permissions id</span></td>
+                <td><span th:utext="|, Permissions: ${entity.permissions}|">Permissions</span></td>
+            </tr>
+            <tr th:if="${entityType.name()} == 'FOLDER_GROUP_PERMISSIONS'">
+                <td><span th:utext="|Id: ${entity.id} |">Permissions id</span></td>
+                <td><span th:utext="|, Permissions: ${entity.permissions}|">Permissions</span></td>
+            </tr>
+            </tbody>
+        </table>
+    </th:block>
+    <table th:if="${entity} == null">
+        <tbody>
+        <tr><td><span th:text="|No ${entityType} was ${action}.|">Action info</span></td></tr>
+        </tbody>
+    </table>
+    <form action="./" method="get">   <!-- action="?" - returns the current page itself -->
+        <input type="submit" value="Back to Entities' List" />
+    </form>
+</body>
+</html>

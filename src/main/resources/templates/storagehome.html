@@ -1,0 +1,114 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Document Storage</title>
+</head>
+
+<body>
+    <table>
+        <tbody>
+        <tr><td><span><span th:text="|${entityType}s|">Entities</span> in storage:</span></td></tr>
+        <tr th:if="${inStorage.empty}">
+        <td colspan="2">No <span th:text="|${entityType}s|">Entities</span> Available</td>
+        </tr>
+        </tbody>
+    </table>
+    <table>
+        <tbody>
+        <tr th:if="${entityType.name()} == 'DOCUMENT'" th:each="entry : ${inStorage}">
+            <td><span th:utext="|Id: ${entry.id} |">Document id</span></td>
+            <td><span th:utext="|, Path: ${entry.path} |">Document Path</span></td>
+            <td><a href="content" th:href="@{~/DocumentStorageWithFramework/rest/docs/{docid}/content(docid=${entry.id})}">Get Content</a></td>
+            <td><a href="download" th:href="@{~/DocumentStorageWithFramework/rest/docs/{docid}(docid=${entry.id})}">Download</a></td>
+            <td><span th:utext="|, Groups: |">Groups</span></td>
+            <td>
+                <th:block th:each="docPermissions : ${entry.documentsPermissions}"> <!--th:with="someVariable=${documentsPermissions.^[permissions == 'WRITE']}"-->
+                    <span th:utext="|[Id: ${docPermissions.group.id}, ${docPermissions.permissions}]  |">Permissions</span>
+                    <!--<th:block th:if="${docPermissionsStat.last} and ${someVariable} == 'WRITE'">
+                        <form action="@{~/DocumentStorageWithSearchCapability/rest/docs/{docid}(docid=${entry.id})}" method="" enctype="multipart/form-data">
+                            <p>File name: <input type="text" name="designatedName"><br></p>
+                            <p>Select a file : <input type="file" name="file" size="45" /></p> &lt;!&ndash;accept=".pdf"&ndash;&gt;
+                            <input type="submit" value="Upload Document" />
+                        </form>
+                    </th:block>-->
+                </th:block>
+            </td>
+        </tr>
+        <tr th:if="${entityType.name()} == 'FOLDER'" th:each="entry : ${inStorage}">
+            <td><span th:utext="|Id: ${entry.id} |">Folder id</span></td>
+            <td><span th:utext="|, Path: ${entry.path} |">Folder Path</span></td>
+            <td><span th:utext="|, Groups: |">Groups</span></td>
+            <td>
+                <th:block th:each="folderPermissions : ${entry.foldersPermissions}">
+                    <span th:utext="|[Id: ${folderPermissions.group.id}, ${folderPermissions.permissions}]  |">Permissions</span>
+                    <!--<th:block th:if="${folderPermissionsStat.last} and ${someVariable} == 'WRITE'">
+                        <form action="docs/1" method="post" enctype="multipart/form-data">
+                            <p>File name: <input type="text" name="designatedName"><br></p>
+                            <p>Select a file : <input type="file" name="file" size="45" /></p> &lt;!&ndash;accept=".pdf"&ndash;&gt;
+                            <input type="submit" value="Upload Document" />
+                        </form>
+                    </th:block>-->
+                </th:block>
+            </td>
+        </tr>
+        <tr th:if="${entityType.name()} == 'USER'" th:each="entry : ${inStorage}">
+            <td><span th:utext="|Id: ${entry.id} |">User name</span></td>
+            <td><span th:utext="|, Name: ${entry.name} |">User id</span></td>
+            <td><span th:utext="|, Groups: |">Groups</span></td>
+            <td><th:block th:each="group : ${entry.groups}"><span th:utext="|[id: ${group.id}, ${group.name}] |">Group name</span></th:block></td>
+<!--            <th:block th:each="group : ${entry.groups}"><td><span th:utext="|Group: ${group.name}; |">User's Groups</span></td></th:block>-->
+        </tr>
+        <tr th:if="${entityType.name()} == 'GROUP'" th:each="entry : ${inStorage}">
+            <td><span th:utext="|${entry.name} |">Group name</span></td>
+            <td><span th:utext="|, Id: ${entry.id} |">Group id</span></td>
+            <!--<td><span th:utext="|, Docs: |">Docs</span></td>
+            <td><th:block th:each="docPermissions : ${entry.documentsPermissions}"><span th:utext="|[Id: ${docPermissions.document.id}, ${docPermissions.permissions}]  |">Permissions</span></th:block></td>-->
+            <td><span th:utext="|, Users: |">Group's users</span></td>
+            <td><th:block th:each="user : ${entry.users}"><span th:utext="|[id: ${user.id}, ${user.name}] |">Group's users</span></th:block></td>
+            <!--<th:block th:each="user : ${entry.users}">
+                <td><span th:utext="|${user.name} |">Group's users</span></td>-->
+<!--                <th:block th:each="group : ${user.groups}"><td><span th:text="|${group.name} |">Group Name</span></td></th:block>-->
+            <!--</th:block>-->
+        </tr>
+        <tr th:if="${entityType.name()} == 'DOC_GROUP_PERMISSIONS'" th:each="entry : ${inStorage}">
+            <td><span th:utext="|${entry.id} , Permissions: ${entry.permissions}|">Permissions</span></td>
+            <!--<td><span th:utext="|Doc id: ${entry.document.id}, Group id: ${entry.group.id}, Permissions: ${entry.permissions}|">Permissions</span></td>-->
+        </tr>
+        <tr th:if="${entityType.name()} == 'FOLDER_GROUP_PERMISSIONS'" th:each="entry : ${inStorage}">
+            <td><span th:utext="|${entry.id} , Permissions: ${entry.permissions}|">Permissions</span></td>
+        </tr>
+        </tbody>
+    </table>
+    <th:block th:if="${entityType.name()} == 'DOCUMENT'">
+        <form name="submitDocumentForm" method="post" enctype="multipart/form-data">  <!--action="docs/1"-->
+
+            <p>To Folder(id): <input type="number" name="folder" value="1" step="1" min="0" required></p>
+            <p>File name: <input type="text" name="designatedName" placeholder="Document.doc" required><br></p>
+            <p>Select a file : <input type="file" name="file" size="45" required/></p> <!--accept=".pdf"-->
+            <input type="submit" value="Upload Document" />
+
+        </form>
+        <script>
+            var form=document.forms['submitDocumentForm'];
+            form.addEventListener('submit', function(){
+                var testVal = this.elements['folder'].value;
+                if(testVal){
+                    this.action = './' + testVal;
+                    this.submit();
+                }
+            }, false);
+        </script>
+    </th:block>
+</body>
+</html>
+<!--<body>-->
+<!--<section th:fragment="fragment1">-->
+<!--    <div th:text="${message}" />-->
+<!--</section>-->
+<!--<p th:utext="${inStorageContentBuilder}"> Document Title </p>-->
+<!--<section th:fragment="fragment2">-->
+<!--    <div th:text="${message}" />-->
+<!--</section>-->
+<!--</body>-->

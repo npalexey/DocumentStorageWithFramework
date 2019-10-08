@@ -1,0 +1,15 @@
+prettyPrint: true
+cacheTTL: 0
+openAPI:
+  info:
+    version: '1.0.0'
+    title: 'Document Storage With Framework'
+  servers:
+  - url: '/DocumentStorageWithFramework/rest'
+#    components:
+#      securitySchemes:
+#        basicAuth:     # <-- arbitrary name for the security scheme
+#          type: http
+#          scheme: basic
+#      security:
+#        - basicAuth: []  # <-- use the same name here
