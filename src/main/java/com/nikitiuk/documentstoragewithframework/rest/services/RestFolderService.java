@@ -8,6 +8,8 @@ import com.nikitiuk.documentstoragewithframework.rest.services.helpers.Inspector
 import com.nikitiuk.documentstoragewithframework.security.SecurityContext;
 import com.nikitiuk.documentstoragewithframework.services.LocalStorageService;
 import com.nikitiuk.documentstoragewithframework.services.SolrService;
+import com.nikitiuk.javabeansinitializer.annotations.annotationtypes.beans.AutoWire;
+import com.nikitiuk.javabeansinitializer.annotations.annotationtypes.beans.Bean;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,13 +20,17 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+@Bean
 public class RestFolderService {
 
     private static final Logger logger = LoggerFactory.getLogger(RestFolderService.class);
     private static ExecutorService executorService = Executors.newSingleThreadExecutor();
-    private FolderDao folderDao = new FolderDao();
-    private DtoDaoTransformer dtoDaoTransformer = new DtoDaoTransformer();
-    private LocalStorageService localStorageService = new LocalStorageService();
+    @AutoWire
+    private FolderDao folderDao;
+    @AutoWire
+    private DtoDaoTransformer dtoDaoTransformer;
+    @AutoWire
+    private LocalStorageService localStorageService;
 
     public List<FolderBean> getFolders(SecurityContext securityContext) throws Exception {
         return folderDao.getFoldersForUser(dtoDaoTransformer.userPrincipalToUserBean(securityContext.getUserPrincipal()));

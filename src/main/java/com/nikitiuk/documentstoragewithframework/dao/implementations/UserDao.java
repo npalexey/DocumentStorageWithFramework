@@ -5,6 +5,7 @@ import com.nikitiuk.documentstoragewithframework.entities.GroupBean;
 import com.nikitiuk.documentstoragewithframework.entities.UserBean;
 import com.nikitiuk.documentstoragewithframework.exceptions.AlreadyExistsException;
 import com.nikitiuk.documentstoragewithframework.utils.HibernateUtil;
+import com.nikitiuk.javabeansinitializer.annotations.annotationtypes.beans.AutoWire;
 import com.nikitiuk.javabeansinitializer.annotations.annotationtypes.beans.Bean;
 import javassist.NotFoundException;
 import org.hibernate.Hibernate;
@@ -16,18 +17,21 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 @Bean
-public class UserDao extends GenericHibernateDao<UserBean> {
+public class UserDao /*extends GenericHibernateDao<UserBean>*/ {
 
     private static final Logger logger = LoggerFactory.getLogger(UserDao.class);
 
-    public UserDao() {
+    /*public UserDao() {
         super(UserBean.class);
-    }
+    }*/
+
+    @AutoWire
+    private HibernateUtil hibernateUtil;
 
     public List<UserBean> getUsers() {
         Transaction transaction = null;
         List<UserBean> userBeanList = new ArrayList<>();
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = hibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             userBeanList = session.createQuery("FROM UserBean", UserBean.class).list();
             for (UserBean userBean : userBeanList) {
@@ -44,10 +48,9 @@ public class UserDao extends GenericHibernateDao<UserBean> {
         }
     }
 
-    @Override
     public UserBean getById(Long id) {
         Transaction transaction = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = hibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             UserBean userBean = session.get(UserBean.class, id);
             if(userBean != null) {
@@ -67,7 +70,7 @@ public class UserDao extends GenericHibernateDao<UserBean> {
 
     public UserBean getUserByName(String userName) {
         Transaction transaction = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = hibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             UserBean userBean = session.createQuery("FROM UserBean WHERE name = '"
                     + userName + "'", UserBean.class).uniqueResult();
@@ -121,7 +124,7 @@ public class UserDao extends GenericHibernateDao<UserBean> {
 
     public void deleteUserByName(String userName) {
         Transaction transaction = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = hibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             session.createQuery("DELETE FROM UserBean WHERE name = '"
                     + userName + "'").executeUpdate();
@@ -135,7 +138,7 @@ public class UserDao extends GenericHibernateDao<UserBean> {
     }
 
     public boolean exists(UserBean user) throws Exception {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = hibernateUtil.getSessionFactory().openSession();
         return session.createQuery(
                 "SELECT 1 FROM UserBean WHERE EXISTS (SELECT 1 FROM UserBean WHERE name = '"+ user.getName() +"')")
                 .uniqueResult() != null;
@@ -145,7 +148,7 @@ public class UserDao extends GenericHibernateDao<UserBean> {
         Transaction transaction = null;
         try {
             user.setGroups(checkGroupsAndReturnMatched(user));
-            Session session = HibernateUtil.getSessionFactory().openSession();
+            Session session = hibernateUtil.getSessionFactory().openSession();
             transaction = session.beginTransaction();
             session.saveOrUpdate(user);
             Hibernate.initialize(user.getGroups());
@@ -169,7 +172,7 @@ public class UserDao extends GenericHibernateDao<UserBean> {
         }
         Transaction transaction = null;
         try{
-            Session session = HibernateUtil.getSessionFactory().openSession();
+            Session session = hibernateUtil.getSessionFactory().openSession();
             Set<String> groupNames = new HashSet<>();
             for(GroupBean groupBean : user.getGroups()){
                 groupNames.add(groupBean.getName());
@@ -179,6 +182,22 @@ public class UserDao extends GenericHibernateDao<UserBean> {
             transaction.commit();
             return checkedGroups;
         } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            throw e;
+        }
+    }
+
+    public void deleteById(Long userId) {
+        Transaction transaction = null;
+        try (Session session = hibernateUtil.getSessionFactory().openSession()) {
+            transaction = session.beginTransaction();
+            session.createQuery("DELETE FROM UserBean WHERE id = (:id)")
+                    .setParameter("id", userId).executeUpdate();
+            transaction.commit();
+        } catch (Exception e) {
+            logger.error("Error at UserDao delete: ", e);
             if (transaction != null) {
                 transaction.rollback();
             }

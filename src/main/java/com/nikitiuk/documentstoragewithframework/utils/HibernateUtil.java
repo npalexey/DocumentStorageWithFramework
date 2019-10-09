@@ -6,6 +6,10 @@ import com.nikitiuk.documentstoragewithframework.entities.*;
 import com.nikitiuk.documentstoragewithframework.entities.helpers.DocGroupPermissionsId;
 import com.nikitiuk.documentstoragewithframework.entities.helpers.FolderGroupPermissionsId;
 import com.nikitiuk.documentstoragewithframework.services.LocalStorageService;
+import com.nikitiuk.javabeansinitializer.annotations.annotationtypes.beans.AutoWire;
+import com.nikitiuk.javabeansinitializer.annotations.annotationtypes.beans.Bean;
+import com.nikitiuk.javabeansinitializer.annotations.annotationtypes.listener.ApplicationListener;
+import com.nikitiuk.javabeansinitializer.annotations.annotationtypes.listener.ContextInitialized;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
@@ -16,13 +20,19 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Properties;
 
+@Bean
 public class HibernateUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(HibernateUtil.class);
     private static SessionFactory sessionFactory;
-    private static LocalStorageService localStorageService;
 
-    public static SessionFactory getSessionFactory() {
+    @AutoWire
+    private LocalStorageService localStorageService;
+
+    @AutoWire
+    private Populator populator;
+
+    public SessionFactory getSessionFactory() {
         if (sessionFactory == null) {
             try {
                 Configuration configuration = new Configuration();
@@ -59,7 +69,6 @@ public class HibernateUtil {
                 ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
                         .applySettings(configuration.getProperties()).build();
                 sessionFactory = configuration.buildSessionFactory(serviceRegistry);
-                localStorageService = new LocalStorageService();
                 populateTables();
             } catch (Exception e) {
                 logger.error("Exception caught while creating Session Factory. ", e);
@@ -68,16 +77,16 @@ public class HibernateUtil {
         return sessionFactory;
     }
 
-    private static void populateTables() throws Exception {
-        Populator.populateTableWithGroups();
-        Populator.populateTableWithUsers();
-        Populator.populateTableWithFolders(localStorageService.listFoldersInPath());
-        Populator.populateTableWithDocs(localStorageService.listDocumentsInPath());
-        Populator.populateTableWithFolderGroupPermissions();
-        Populator.populateTableWithDocGroupPermissions();
+    private void populateTables() throws Exception {
+        populator.populateTableWithGroups();
+        populator.populateTableWithUsers();
+        populator.populateTableWithFolders(localStorageService.listFoldersInPath());
+        populator.populateTableWithDocs(localStorageService.listDocumentsInPath());
+        populator.populateTableWithFolderGroupPermissions();
+        populator.populateTableWithDocGroupPermissions();
     }
 
-    public static void shutdown() {
+    public void shutdown() {
         getSessionFactory().close();
     }
 }

@@ -4,7 +4,9 @@ import com.nikitiuk.documentstoragewithframework.entities.FolderBean;
 import com.nikitiuk.documentstoragewithframework.entities.UserBean;
 import com.nikitiuk.documentstoragewithframework.rest.services.helpers.dto.FolderDto;
 import com.nikitiuk.documentstoragewithframework.security.UserPrincipal;
+import com.nikitiuk.javabeansinitializer.annotations.annotationtypes.beans.Bean;
 
+@Bean
 public class DtoDaoTransformer {
 
     public UserBean userPrincipalToUserBean(UserPrincipal userPrincipal) {

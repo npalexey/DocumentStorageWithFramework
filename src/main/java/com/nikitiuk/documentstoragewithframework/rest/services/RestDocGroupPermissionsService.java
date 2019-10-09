@@ -5,12 +5,16 @@ import com.nikitiuk.documentstoragewithframework.entities.DocGroupPermissions;
 import com.nikitiuk.documentstoragewithframework.exceptions.NoValidDataFromSourceException;
 import com.nikitiuk.documentstoragewithframework.rest.entities.DocGroupPermissionsRequest;
 import com.nikitiuk.documentstoragewithframework.rest.services.helpers.InspectorService;
+import com.nikitiuk.javabeansinitializer.annotations.annotationtypes.beans.AutoWire;
+import com.nikitiuk.javabeansinitializer.annotations.annotationtypes.beans.Bean;
 
 import java.util.List;
 
+@Bean
 public class RestDocGroupPermissionsService {
 
-    private DocGroupPermissionsDao docGroupPermissionsDao = new DocGroupPermissionsDao();
+    @AutoWire
+    private DocGroupPermissionsDao docGroupPermissionsDao;
 
     public List<DocGroupPermissions> getAllGroupPermissionsForDocuments() throws Exception {
         return docGroupPermissionsDao.getAllDocGroupPermissions();

@@ -1,3 +1,4 @@
+<!--
 <!DOCTYPE web-app PUBLIC
         "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
         "http://java.sun.com/dtd/web-app_2_3.dtd" >
@@ -9,17 +10,17 @@
     </listener>
     <servlet>
         <servlet-name>Document Storage</servlet-name>
-        <!-- For Jersey 1.x -->
-        <!-- <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class> -->
-        <!-- For Jersey 2.x -->
+        &lt;!&ndash; For Jersey 1.x &ndash;&gt;
+        &lt;!&ndash; <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class> &ndash;&gt;
+        &lt;!&ndash; For Jersey 2.x &ndash;&gt;
         <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
         <init-param>
-            <!-- For Jersey 1.x -->
-            <!-- <param-name>com.sun.jersey.config.property.packages</param-name> -->
-            <!-- For Jersey 2.x -->
+            &lt;!&ndash; For Jersey 1.x &ndash;&gt;
+            &lt;!&ndash; <param-name>com.sun.jersey.config.property.packages</param-name> &ndash;&gt;
+            &lt;!&ndash; For Jersey 2.x &ndash;&gt;
             <param-name>jersey.config.server.provider.packages</param-name>
             <param-value>
-                <!-- io.swagger.jaxrs.listing, -->
+                &lt;!&ndash; io.swagger.jaxrs.listing, &ndash;&gt;
                 com.nikitiuk,
                 io.swagger.v3.jaxrs2.integration.resources
             </param-value>
@@ -30,7 +31,7 @@
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
-    <!-- <servlet>
+    &lt;!&ndash; <servlet>
         <servlet-name>Jersey2Config</servlet-name>
         <servlet-class>io.swagger.jersey.config.JerseyJaxrsConfig</servlet-class>
         <init-param>
@@ -42,7 +43,7 @@
             <param-value>http://localhost:9999/DocumentStorageWithSearchCapability</param-value>
         </init-param>
         <load-on-startup>2</load-on-startup>
-    </servlet> -->
+    </servlet> &ndash;&gt;
     <servlet-mapping>
         <servlet-name>Document Storage</servlet-name>
         <url-pattern>/rest/*</url-pattern>
@@ -52,3 +53,4 @@
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
 </web-app>
+-->

@@ -7,6 +7,8 @@ import com.nikitiuk.documentstoragewithframework.entities.UserBean;
 import com.nikitiuk.documentstoragewithframework.exceptions.AlreadyExistsException;
 import com.nikitiuk.documentstoragewithframework.rest.services.helpers.InspectorService;
 import com.nikitiuk.documentstoragewithframework.utils.HibernateUtil;
+import com.nikitiuk.javabeansinitializer.annotations.annotationtypes.beans.AutoWire;
+import com.nikitiuk.javabeansinitializer.annotations.annotationtypes.beans.Bean;
 import org.apache.commons.collections4.CollectionUtils;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
@@ -17,13 +19,17 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FolderDao extends GenericHibernateDao<FolderBean> {
+@Bean
+public class FolderDao /*extends GenericHibernateDao<FolderBean>*/ {
 
     private static final Logger logger = LoggerFactory.getLogger(FolderDao.class);
 
-    public FolderDao() {
+    /*public FolderDao() {
         super(FolderBean.class);
-    }
+    }*/
+
+    @AutoWire
+    private HibernateUtil hibernateUtil;
 
     public FolderBean saveFolder(FolderBean folder) throws Exception {
         if (exists(folder)) {
@@ -37,10 +43,10 @@ public class FolderDao extends GenericHibernateDao<FolderBean> {
         return save(updatedFolder);
     }
 
-    @Override
+    //@Override
     public FolderBean getById(Long folderId) {
         Transaction transaction = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = hibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             FolderBean folderBean = session.get(FolderBean.class, folderId);
             if (folderBean != null) {
@@ -61,7 +67,7 @@ public class FolderDao extends GenericHibernateDao<FolderBean> {
     public List<FolderBean> getAllFolders() {
         Transaction transaction = null;
         List<FolderBean> folderBeanList = new ArrayList<>();
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = hibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             folderBeanList = session.createQuery("FROM FolderBean", FolderBean.class).list();
             if (CollectionUtils.isNotEmpty(folderBeanList)) {
@@ -107,7 +113,7 @@ public class FolderDao extends GenericHibernateDao<FolderBean> {
         }
         List<Long> groupIds = userBean.getGroupsIds();
         Transaction transaction = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = hibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             folderBeanList = session.createQuery("SELECT DISTINCT folder FROM FolderBean folder INNER JOIN FolderGroupPermissions permissions ON folder.id = permissions.folder.id " +
                     "WHERE permissions.group.id IN (:ids)", FolderBean.class).setParameterList("ids", groupIds).list();
@@ -127,7 +133,7 @@ public class FolderDao extends GenericHibernateDao<FolderBean> {
 
     public void deleteFolder(Long folderId) {
         Transaction transaction = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = hibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             session.createQuery("DELETE FROM DocBean WHERE path LIKE CONCAT((SELECT path FROM FolderBean WHERE id = (:id)) ,'%')")
                     .setParameter("id", folderId).executeUpdate();
@@ -149,7 +155,7 @@ public class FolderDao extends GenericHibernateDao<FolderBean> {
     }
 
     public boolean exists(FolderBean folder) throws Exception {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = hibernateUtil.getSessionFactory().openSession();
         return session.createQuery(
                 "SELECT 1 FROM FolderBean WHERE EXISTS (SELECT 1 FROM FolderBean WHERE path = '" + folder.getPath() + "')")
                 .uniqueResult() != null;
@@ -157,7 +163,7 @@ public class FolderDao extends GenericHibernateDao<FolderBean> {
 
     private FolderBean save(FolderBean folder) throws Exception {
         Transaction transaction = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession();) {
+        try (Session session = hibernateUtil.getSessionFactory().openSession();) {
             /*folder.setFoldersPermissions(getPermissionsOnlyForExistingGroups(folder));*/
             transaction = session.beginTransaction();
             session.saveOrUpdate(folder);

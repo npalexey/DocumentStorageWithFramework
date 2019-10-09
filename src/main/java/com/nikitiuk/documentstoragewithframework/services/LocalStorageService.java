@@ -30,7 +30,14 @@ import java.util.stream.Stream;
 public class LocalStorageService {
 
     private static final Logger logger = LoggerFactory.getLogger(LocalStorageService.class);
-    private static final String PATH = System.getProperty("local.path.to.storage"); /*"/home/npalexey/workenv/DOWNLOADED/"*/
+    private static String PATH;
+
+    public String getPath() {
+        if (PATH == null) {
+            PATH = System.getProperty("local.path.to.storage"); /*"/home/npalexey/workenv/DOWNLOADED/"*/
+        }
+        return PATH;
+    }
 
     public List<DocBean> listDocumentsInPath() throws IOException {
         List<DocBean> docBeanList = new ArrayList<>();
@@ -55,14 +62,14 @@ public class LocalStorageService {
     }
 
     private List<String> collectFoldersInPath() throws IOException {
-        Stream<Path> walk = Files.walk(Paths.get(PATH));
+        Stream<Path> walk = Files.walk(Paths.get(getPath()));
         return walk.filter(Files::isDirectory)
                 .map(x -> x.toString())
                 .collect(Collectors.toList());
     }
 
     private List<String> collectDocumentsInPath() throws IOException {
-        Stream<Path> walk = Files.walk(Paths.get(PATH));
+        Stream<Path> walk = Files.walk(Paths.get(getPath()));
         Set<String> allowedFormats = Stream.of("doc", "docx", "pdf", "txt", "html", "xml")
                 .collect(Collectors.toCollection(HashSet::new));
         return walk.filter(Files::isRegularFile)

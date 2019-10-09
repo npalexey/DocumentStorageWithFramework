@@ -7,6 +7,8 @@ import com.nikitiuk.documentstoragewithframework.entities.GroupBean;
 import com.nikitiuk.documentstoragewithframework.entities.helpers.enums.Permissions;
 import com.nikitiuk.documentstoragewithframework.rest.services.helpers.InspectorService;
 import com.nikitiuk.documentstoragewithframework.utils.HibernateUtil;
+import com.nikitiuk.javabeansinitializer.annotations.annotationtypes.beans.AutoWire;
+import com.nikitiuk.javabeansinitializer.annotations.annotationtypes.beans.Bean;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.slf4j.Logger;
@@ -14,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
+@Bean
 public class DocGroupPermissionsDao extends GenericHibernateDao<DocGroupPermissions> {
 
     private static final Logger logger = LoggerFactory.getLogger(DocGroupPermissionsDao.class);
@@ -22,9 +25,12 @@ public class DocGroupPermissionsDao extends GenericHibernateDao<DocGroupPermissi
         super(DocGroupPermissions.class);
     }
 
+    @AutoWire
+    private HibernateUtil hibernateUtil;
+
     public List<DocGroupPermissions> getAllDocGroupPermissions() throws Exception {
         Transaction transaction = null;
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = hibernateUtil.getSessionFactory().openSession();
         try {
             transaction = session.beginTransaction();
             List<DocGroupPermissions> docGroupPermissionsList = session.createQuery("FROM DocGroupPermissions per LEFT JOIN FETCH " +
@@ -43,7 +49,7 @@ public class DocGroupPermissionsDao extends GenericHibernateDao<DocGroupPermissi
 
     public List<DocGroupPermissions> getPermissionsForDocumentsForGroup(Long groupId) throws Exception {
         Transaction transaction = null;
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = hibernateUtil.getSessionFactory().openSession();
         try {
             transaction = session.beginTransaction();
             List<DocGroupPermissions> docGroupPermissionsList = session.createQuery("FROM DocGroupPermissions per LEFT JOIN FETCH " +
@@ -63,7 +69,7 @@ public class DocGroupPermissionsDao extends GenericHibernateDao<DocGroupPermissi
 
     public List<DocGroupPermissions> getPermissionsForDocument(Long documentId) throws Exception {
         Transaction transaction = null;
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = hibernateUtil.getSessionFactory().openSession();
         try {
             transaction = session.beginTransaction();
             List<DocGroupPermissions> docPermissionsList = session.createQuery("FROM DocGroupPermissions per LEFT JOIN FETCH " +
@@ -83,7 +89,7 @@ public class DocGroupPermissionsDao extends GenericHibernateDao<DocGroupPermissi
 
     public Integer deleteAllPermissionsForGroup(Long groupId) throws Exception {
         Transaction transaction = null;
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = hibernateUtil.getSessionFactory().openSession();
         try {
             transaction = session.beginTransaction();
             Integer quantityOfDeletedPermissions = session.createQuery("DELETE FROM DocGroupPermissions " +
@@ -102,7 +108,7 @@ public class DocGroupPermissionsDao extends GenericHibernateDao<DocGroupPermissi
 
     public Integer deletePermissionsForDocumentForGroup(Long documentId, Long groupId) throws Exception {
         Transaction transaction = null;
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = hibernateUtil.getSessionFactory().openSession();
         try {
             transaction = session.beginTransaction();
             Integer quantityOfDeletedPermissions = session.createQuery("DELETE FROM DocGroupPermissions " +
@@ -122,7 +128,7 @@ public class DocGroupPermissionsDao extends GenericHibernateDao<DocGroupPermissi
 
     public Integer deleteAllPermissionsForDocumentExceptAdmin(Long documentId) throws Exception {
         Transaction transaction = null;
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = hibernateUtil.getSessionFactory().openSession();
         try {
             transaction = session.beginTransaction();
             Integer quantityOfDeletedPermissions = session.createQuery("DELETE FROM DocGroupPermissions " +
@@ -142,7 +148,7 @@ public class DocGroupPermissionsDao extends GenericHibernateDao<DocGroupPermissi
 
     public Integer deleteAllPermissionsForDocument(Long documentId) throws Exception {
         Transaction transaction = null;
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = hibernateUtil.getSessionFactory().openSession();
         try {
             transaction = session.beginTransaction();
             Integer quantityOfDeletedPermissions = session.createQuery("DELETE FROM DocGroupPermissions " +
@@ -177,7 +183,7 @@ public class DocGroupPermissionsDao extends GenericHibernateDao<DocGroupPermissi
 
     private DocGroupPermissions setPermission(Long documentId, Long groupId, Permissions permission) throws Exception {
         Transaction transaction = null;
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = hibernateUtil.getSessionFactory().openSession();
         try {
             transaction = session.beginTransaction();
             DocGroupPermissions docGroupPermissions = session.createQuery("FROM DocGroupPermissions " +

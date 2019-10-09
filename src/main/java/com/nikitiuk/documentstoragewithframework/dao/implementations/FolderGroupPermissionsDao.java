@@ -7,6 +7,8 @@ import com.nikitiuk.documentstoragewithframework.entities.GroupBean;
 import com.nikitiuk.documentstoragewithframework.entities.helpers.enums.Permissions;
 import com.nikitiuk.documentstoragewithframework.rest.services.helpers.InspectorService;
 import com.nikitiuk.documentstoragewithframework.utils.HibernateUtil;
+import com.nikitiuk.javabeansinitializer.annotations.annotationtypes.beans.AutoWire;
+import com.nikitiuk.javabeansinitializer.annotations.annotationtypes.beans.Bean;
 import org.apache.commons.collections4.CollectionUtils;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
@@ -18,18 +20,22 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FolderGroupPermissionsDao extends GenericHibernateDao<FolderGroupPermissions> {
+@Bean
+public class FolderGroupPermissionsDao /*extends GenericHibernateDao<FolderGroupPermissions>*/ {
 
     private static final Logger logger = LoggerFactory.getLogger(FolderGroupPermissionsDao.class);
 
-    public FolderGroupPermissionsDao() {
+    /*public FolderGroupPermissionsDao() {
         super(FolderGroupPermissions.class);
-    }
+    }*/
+
+    @AutoWire
+    private HibernateUtil hibernateUtil;
 
     public List<FolderGroupPermissions> getAllFolderGroupPermissions() {
         Transaction transaction = null;
         List<FolderGroupPermissions> folderGroupPermissionsList = new ArrayList<>();
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = hibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             folderGroupPermissionsList = session.createQuery("FROM FolderGroupPermissions", FolderGroupPermissions.class).list();
             if (CollectionUtils.isNotEmpty(folderGroupPermissionsList)) {
@@ -48,7 +54,7 @@ public class FolderGroupPermissionsDao extends GenericHibernateDao<FolderGroupPe
     public List<FolderGroupPermissions> getPermissionsForFoldersForGroup(Long groupId) {
         Transaction transaction = null;
         List<FolderGroupPermissions> folderGroupPermissionsList = new ArrayList<>();
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = hibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             folderGroupPermissionsList = session.createQuery("FROM FolderGroupPermissions WHERE group = " + groupId, FolderGroupPermissions.class).list();
             if (CollectionUtils.isNotEmpty(folderGroupPermissionsList)) {
@@ -67,7 +73,7 @@ public class FolderGroupPermissionsDao extends GenericHibernateDao<FolderGroupPe
     public List<FolderGroupPermissions> getPermissionsForFolder(Long folderId) {
         Transaction transaction = null;
         List<FolderGroupPermissions> folderPermissionsList = new ArrayList<>();
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = hibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             folderPermissionsList = session.createQuery("FROM FolderGroupPermissions WHERE folder = " + folderId, FolderGroupPermissions.class).list();
             if (CollectionUtils.isNotEmpty(folderPermissionsList)) {
@@ -86,7 +92,7 @@ public class FolderGroupPermissionsDao extends GenericHibernateDao<FolderGroupPe
     public Integer deleteAllPermissionsForGroup(Long groupId) throws Exception {
         Transaction transaction = null;
         Integer quantityOfDeletedPermissions;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = hibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             quantityOfDeletedPermissions = session.createQuery("DELETE FROM FolderGroupPermissions WHERE group = "
                     + groupId).executeUpdate();
@@ -104,7 +110,7 @@ public class FolderGroupPermissionsDao extends GenericHibernateDao<FolderGroupPe
     public Integer deletePermissionsForFolderForGroup(Long folderId, Long groupId) throws Exception {
         Transaction transaction = null;
         Integer quantityOfDeletedPermissions;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = hibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             quantityOfDeletedPermissions = session.createQuery("DELETE FROM FolderGroupPermissions WHERE group = "
                     + groupId + " AND folder = " + folderId).executeUpdate();
@@ -122,7 +128,7 @@ public class FolderGroupPermissionsDao extends GenericHibernateDao<FolderGroupPe
     public Integer deleteAllPermissionsForFolderExceptAdmin(Long folderId) throws Exception {
         Transaction transaction = null;
         Integer quantityOfDeletedPermissions;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = hibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             quantityOfDeletedPermissions = session.createQuery("DELETE FROM FolderGroupPermissions WHERE group != 1 AND folder = "
                     + folderId).executeUpdate();
@@ -140,7 +146,7 @@ public class FolderGroupPermissionsDao extends GenericHibernateDao<FolderGroupPe
     public Integer deleteAllPermissionsForFolder(Long folderId) throws Exception {
         Transaction transaction = null;
         Integer quantityOfDeletedPermissions;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = hibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             quantityOfDeletedPermissions = session.createQuery("DELETE FROM FolderGroupPermissions WHERE folder = "
                     + folderId).executeUpdate();
@@ -174,7 +180,7 @@ public class FolderGroupPermissionsDao extends GenericHibernateDao<FolderGroupPe
     private FolderGroupPermissions setPermission(Long folderId, Long groupId, Permissions permission) throws Exception {
         Transaction transaction = null;
         FolderGroupPermissions setFolderGroupPermissions;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = hibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             FolderGroupPermissions folderGroupPermissions = session.createQuery("FROM FolderGroupPermissions WHERE folder = "
                     + folderId + " AND group = " + groupId, FolderGroupPermissions.class).uniqueResult();

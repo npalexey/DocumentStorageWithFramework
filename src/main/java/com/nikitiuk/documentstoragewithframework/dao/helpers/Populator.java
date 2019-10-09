@@ -6,6 +6,8 @@ import com.nikitiuk.documentstoragewithframework.dao.implementations.GroupDao;
 import com.nikitiuk.documentstoragewithframework.entities.*;
 import com.nikitiuk.documentstoragewithframework.entities.helpers.enums.Permissions;
 import com.nikitiuk.documentstoragewithframework.utils.HibernateUtil;
+import com.nikitiuk.javabeansinitializer.annotations.annotationtypes.beans.AutoWire;
+import com.nikitiuk.javabeansinitializer.annotations.annotationtypes.beans.Bean;
 import org.apache.commons.collections4.CollectionUtils;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
@@ -15,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
+@Bean
 public class Populator {
 
     private static final Logger logger = LoggerFactory.getLogger(Populator.class);
@@ -25,7 +28,16 @@ public class Populator {
     private static List<FolderGroupPermissions> folderGroupPermissionsList = new ArrayList<>();
     private static List<DocGroupPermissions> docGroupPermissionsList = new ArrayList<>();
 
-    private static void getUserListForPopulate() {
+    @AutoWire
+    private DocDao docDao;
+    @AutoWire
+    private GroupDao groupDao;
+    @AutoWire
+    private FolderDao folderDao;
+    @AutoWire
+    private HibernateUtil hibernateUtil;
+
+    private void getUserListForPopulate() {
         userList.add(new UserBean("Admin", "adminpswrd"));
         userList.add(new UserBean("Employee", "employeepswrd"));
         userList.add(new UserBean("Guest", "guestpswrd"));
@@ -38,12 +50,10 @@ public class Populator {
         userList.get(0).setGroups(groupBeans2);
     }
 
-    private static void getFolderGroupPermissionsListForPopulate() {
-        FolderDao folderDao = new FolderDao();
+    private void getFolderGroupPermissionsListForPopulate() {
         try {
             List<FolderBean> folderBeanList = folderDao.getAllFolders();
             if (CollectionUtils.isNotEmpty(folderBeanList)) {
-                GroupDao groupDao = new GroupDao();
                 List<GroupBean> groupBeanList = groupDao.getGroups();
                 for (FolderBean folderBean : folderBeanList) {
                     FolderGroupPermissions folderGroupPermissionsAdmin = new FolderGroupPermissions(groupBeanList.get(0), folderBean);
@@ -62,12 +72,10 @@ public class Populator {
         }
     }
 
-    private static void getDocGroupPermissionsListForPopulate() {
-        DocDao docDao = new DocDao();
+    private void getDocGroupPermissionsListForPopulate() {
         try {
             List<DocBean> docBeanList = docDao.getAllDocuments();
             if (CollectionUtils.isNotEmpty(docBeanList)) {
-                GroupDao groupDao = new GroupDao();
                 List<GroupBean> groupBeanList = groupDao.getGroups();
                 for (DocBean docBean : docBeanList) {
                     DocGroupPermissions docGroupPermissionsAdmin = new DocGroupPermissions(groupBeanList.get(0), docBean);
@@ -86,9 +94,9 @@ public class Populator {
         }
     }
 
-    public static void populateTableWithGroups() {
+    public void populateTableWithGroups() {
         Transaction transaction = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = hibernateUtil.getSessionFactory().openSession()) {
             for (GroupBean groupBean : groupList) {
                 transaction = session.beginTransaction();
                 session.saveOrUpdate(groupBean);
@@ -102,10 +110,10 @@ public class Populator {
         }
     }
 
-    public static void populateTableWithUsers() {
+    public void populateTableWithUsers() {
         getUserListForPopulate();
         Transaction transaction = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = hibernateUtil.getSessionFactory().openSession()) {
             for (UserBean userBean : userList) {
                 transaction = session.beginTransaction();
                 session.saveOrUpdate(userBean);
@@ -120,9 +128,9 @@ public class Populator {
         }
     }
 
-    public static void populateTableWithFolders(List<FolderBean> folderBeanList) {
+    public void populateTableWithFolders(List<FolderBean> folderBeanList) {
         Transaction transaction = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = hibernateUtil.getSessionFactory().openSession()) {
             for (FolderBean folderBean : folderBeanList) {
                 transaction = session.beginTransaction();
                 session.saveOrUpdate(folderBean);
@@ -136,9 +144,9 @@ public class Populator {
         }
     }
 
-    public static void populateTableWithDocs(List<DocBean> docBeanList) {
+    public void populateTableWithDocs(List<DocBean> docBeanList) {
         Transaction transaction = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = hibernateUtil.getSessionFactory().openSession()) {
             for (DocBean docBean : docBeanList) {
                 transaction = session.beginTransaction();
                 session.saveOrUpdate(docBean);
@@ -152,10 +160,10 @@ public class Populator {
         }
     }
 
-    public static void populateTableWithFolderGroupPermissions() {
+    public void populateTableWithFolderGroupPermissions() {
         getFolderGroupPermissionsListForPopulate();
         Transaction transaction = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = hibernateUtil.getSessionFactory().openSession()) {
             for (FolderGroupPermissions folderGroupPermissions : folderGroupPermissionsList) {
                 transaction = session.beginTransaction();
                 session.saveOrUpdate(folderGroupPermissions);
@@ -169,10 +177,10 @@ public class Populator {
         }
     }
 
-    public static void populateTableWithDocGroupPermissions() {
+    public void populateTableWithDocGroupPermissions() {
         getDocGroupPermissionsListForPopulate();
         Transaction transaction = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = hibernateUtil.getSessionFactory().openSession()) {
             for (DocGroupPermissions docGroupPermissions : docGroupPermissionsList) {
                 transaction = session.beginTransaction();
                 session.saveOrUpdate(docGroupPermissions);

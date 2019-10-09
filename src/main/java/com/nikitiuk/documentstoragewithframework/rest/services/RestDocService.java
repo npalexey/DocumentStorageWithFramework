@@ -15,6 +15,8 @@ import com.nikitiuk.documentstoragewithframework.security.SecurityContext;
 import com.nikitiuk.documentstoragewithframework.services.LocalStorageService;
 import com.nikitiuk.documentstoragewithframework.services.SearchResultsModifier;
 import com.nikitiuk.documentstoragewithframework.services.SolrService;
+import com.nikitiuk.javabeansinitializer.annotations.annotationtypes.beans.AutoWire;
+import com.nikitiuk.javabeansinitializer.annotations.annotationtypes.beans.Bean;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -32,15 +34,21 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+@Bean
 public class RestDocService {
 
     private static final Logger logger = LoggerFactory.getLogger(RestDocService.class);
     private static ExecutorService executorService = Executors.newSingleThreadExecutor();
-    private DocDao docDao = new DocDao();
-    private FolderDao folderDao = new FolderDao();
-    private DocGroupPermissionsDao docGroupPermissionsDao = new DocGroupPermissionsDao();
-    private LocalStorageService localStorageService = new LocalStorageService();
-    private DtoDaoTransformer dtoDaoTransformer = new DtoDaoTransformer();
+    @AutoWire
+    private DocDao docDao;
+    @AutoWire
+    private FolderDao folderDao;
+    @AutoWire
+    private DocGroupPermissionsDao docGroupPermissionsDao;
+    @AutoWire
+    private LocalStorageService localStorageService;
+    @AutoWire
+    private DtoDaoTransformer dtoDaoTransformer;
 
     public List<DocBean> getDocuments(SecurityContext securityContext) throws Exception {
         return docDao.getDocumentsForUser(dtoDaoTransformer.userPrincipalToUserBean(securityContext.getUserPrincipal()));

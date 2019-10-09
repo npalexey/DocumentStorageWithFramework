@@ -3,6 +3,7 @@ package com.nikitiuk.documentstoragewithframework.starter;
 import com.nikitiuk.documentstoragewithframework.utils.HibernateUtil;
 import com.nikitiuk.javabeansinitializer.annotations.ApplicationCustomContext;
 import com.nikitiuk.javabeansinitializer.annotations.ContextInitializer;
+import com.nikitiuk.javabeansinitializer.annotations.annotationtypes.beans.AutoWire;
 import com.nikitiuk.javabeansinitializer.annotations.annotationtypes.listener.ApplicationListener;
 import com.nikitiuk.javabeansinitializer.annotations.annotationtypes.listener.ContextInitialized;
 import org.slf4j.Logger;
@@ -16,14 +17,17 @@ import java.util.Properties;
 public class AppListener {
 
     private static final Logger logger = LoggerFactory.getLogger(AppListener.class);
-    private static ApplicationCustomContext applicationCustomContext = null;
+
+    @AutoWire
+    private HibernateUtil hibernateUtil;
+    /*private static ApplicationCustomContext applicationCustomContext = null;
 
     public static ApplicationCustomContext getContext() {
         if (applicationCustomContext == null) {
             return applicationCustomContext = new ContextInitializer().initializeContext("com.nikitiuk.documentstoragewithsearchcapability");
         }
         return applicationCustomContext;
-    }
+    }*/
 
     @ContextInitialized
     public void contextInitialized() {
@@ -42,8 +46,8 @@ public class AppListener {
             System.setProperty("tika.config", prop.getProperty("TIKA_CONFIG"));
             System.setProperty("default.folder", prop.getProperty("DEFAULT_FOLDER"));
             inputStream.close();
-            HibernateUtil.getSessionFactory();
-            applicationCustomContext = new ContextInitializer().initializeContext("com.nikitiuk.documentstoragewithframework");
+            hibernateUtil.getSessionFactory();
+            //applicationCustomContext = new ContextInitializer().initializeContext("com.nikitiuk.documentstoragewithframework");
         } catch (Exception e) {
             logger.error("Error at ApplicationListener contextInitialized: ", e);
         }

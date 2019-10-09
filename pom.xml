@@ -336,7 +336,7 @@
 <!--                            <goal>war</goal>-->
 <!--                        </goals>-->
 <!--                    </execution>-->
-                    <execution>
+                    <!--<execution>
                         <id>additional-war</id>
                         <phase>package</phase>
                         <goals>
@@ -345,7 +345,7 @@
                         <configuration>
                             <outputDirectory>/home/npalexey/workenv/apache-tomcat-9.0.22/webapps</outputDirectory>
                         </configuration>
-                    </execution>
+                    </execution>-->
                 </executions>
             </plugin>
         </plugins>

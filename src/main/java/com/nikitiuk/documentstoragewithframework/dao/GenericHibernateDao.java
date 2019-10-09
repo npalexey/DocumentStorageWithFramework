@@ -1,6 +1,8 @@
 package com.nikitiuk.documentstoragewithframework.dao;
 
 import com.nikitiuk.documentstoragewithframework.utils.HibernateUtil;
+import com.nikitiuk.javabeansinitializer.annotations.annotationtypes.beans.AutoWire;
+import com.nikitiuk.javabeansinitializer.annotations.annotationtypes.beans.Bean;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -14,16 +16,18 @@ public class GenericHibernateDao<T> {
 
     private static final Logger logger = LoggerFactory.getLogger(GenericHibernateDao.class);
 
+    private HibernateUtil hibernateUtil;
+
     private Class<T> clazz;
-    private SessionFactory sessionFactory;
+    //private SessionFactory sessionFactory;
 
     public GenericHibernateDao(Class<T> clazz) {
-        this.sessionFactory = HibernateUtil.getSessionFactory();
+        //this.sessionFactory = HibernateUtil.getSessionFactory();
         this.clazz = clazz;
     }
 
     private Session getCurrentSession() {
-        return sessionFactory.getCurrentSession();
+        return hibernateUtil.getSessionFactory().getCurrentSession();
     }
 
 
