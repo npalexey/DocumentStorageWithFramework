@@ -34,14 +34,21 @@ import java.util.Set;
 @Order(0)
 public class AuthenticationFilter {
 
-    private static final String AUTHENTICATION_SCHEME = System.getProperty("current.authentication.scheme");
     private static final Logger logger = LoggerFactory.getLogger(AuthenticationFilter.class);
+    private static String AUTHENTICATION_SCHEME;
 
     @AutoWire
     private UserDao userDao;
 
     @Context
     private RequestContext requestContext;
+
+    public String getAuthenticationScheme() {
+        if (AUTHENTICATION_SCHEME == null) {
+            AUTHENTICATION_SCHEME = System.getProperty("current.authentication.scheme");
+        }
+        return AUTHENTICATION_SCHEME;
+    }
 
     @Filter
     public void filter() throws IOException {
@@ -69,7 +76,7 @@ public class AuthenticationFilter {
 
         //Get encoded username and password
         final String encodedUserPassword = authorization.replaceFirst(
-                AUTHENTICATION_SCHEME + " ", "");
+                getAuthenticationScheme() + " ", "");
 
         //Decode username and password
         String usernameAndPassword = new String(Base64.getDecoder().decode(encodedUserPassword/*.getBytes()*/));
