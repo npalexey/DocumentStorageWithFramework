@@ -11,6 +11,7 @@ import javassist.NotFoundException;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.jpa.QueryHints;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,10 +34,12 @@ public class UserDao /*extends GenericHibernateDao<UserBean>*/ {
         List<UserBean> userBeanList = new ArrayList<>();
         try (Session session = hibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            userBeanList = session.createQuery("FROM UserBean", UserBean.class).list();
+            userBeanList = session.createQuery("SELECT DISTINCT usr FROM UserBean usr LEFT JOIN FETCH usr.groups ORDER BY usr.id", UserBean.class)
+                    .setHint(QueryHints.HINT_PASS_DISTINCT_THROUGH, false).list();
+            /*userBeanList = session.createQuery("FROM UserBean", UserBean.class).list();
             for (UserBean userBean : userBeanList) {
                 Hibernate.initialize(userBean.getGroups());
-            }
+            }*/
             transaction.commit();
             return userBeanList;
         } catch (Exception e) {
