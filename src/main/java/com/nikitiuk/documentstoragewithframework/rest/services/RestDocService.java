@@ -49,6 +49,7 @@ public class RestDocService {
     private LocalStorageService localStorageService;
     @AutoWire
     private DtoDaoTransformer dtoDaoTransformer;
+    private Tika tika = new Tika();
 
     public List<DocBean> getDocuments(SecurityContext securityContext) throws Exception {
         return docDao.getDocumentsForUser(dtoDaoTransformer.userPrincipalToUserBean(securityContext.getUserPrincipal()));
@@ -95,7 +96,7 @@ public class RestDocService {
         Runnable addTask = () -> {
             try {
                 SolrService.indexDocumentWithSolr(folderBean.getPath() + trimmedDesignatedName,
-                        new Tika().detect(trimmedDesignatedName));
+                        tika.detect(trimmedDesignatedName));
             } catch (IOException | SolrServerException e) {
                 logger.error("Error wile indexing with Solr.", e);
                 throw new WebApplicationException("Error while indexing document. Please, try again.");
