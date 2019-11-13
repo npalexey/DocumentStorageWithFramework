@@ -16,6 +16,8 @@ import java.io.IOException;
 
 public class ResponseService {
 
+    private static Tika tika = new Tika();
+
     public static Response errorResponse(ResponseCode code, String message) throws IOException {
         final Context ctx = new Context();
         ctx.setVariable("status", code.getStringValue());
@@ -54,7 +56,7 @@ public class ResponseService {
 
     public static Response okResponseForFile(DocumentDownloaderResponseBuilder documentDownloaderResponseBuilder) throws Exception {
         String fileName = documentDownloaderResponseBuilder.getDocumentName();
-        String mimeType = new Tika().detect(fileName);
+        String mimeType = tika.detect(fileName);
         ResponseBuilder responseBuilder = new ResponseBuilder(ResponseCode.HTTP_200_OK, mimeType,
                 documentDownloaderResponseBuilder.getFileStream().available(), fileName);
         responseBuilder.addBody(documentDownloaderResponseBuilder.getFileStream());
